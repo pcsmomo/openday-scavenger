@@ -12,6 +12,17 @@ from .exceptions import VisitorExistsError, VisitorUIDInvalidError
 from .models import Visitor, VisitorPool
 from .schemas import VisitorPoolCreate
 
+__all__ = (
+    "get_all",
+    "count",
+    "create",
+    "check_out",
+    "get_correct_responses",
+    "has_completed_all_puzzles",
+    "get_visitor_pool",
+    "create_visitor_pool",
+)
+
 
 def get_all(
     db_session: Session,
@@ -42,6 +53,20 @@ def get_all(
     )
 
     return q.all()  # type: ignore
+
+
+def count(db_session: Session, *, still_playing: bool = False) -> int:
+    """
+    Convenience method to count the number of visitors.
+
+    Args:
+        db_session (Session): The SQLAlchemy session object.
+        still_playing (bool): Whether to filter for visitors who are still playing (checked_out is None).
+
+    Returns:
+        int: The number of visitors.
+    """
+    return _filter(db_session.query(Visitor), still_playing=still_playing).count()
 
 
 def create(
